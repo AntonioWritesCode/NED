@@ -100,34 +100,52 @@ def ask_ai(text):
 # -------------------------
 
 
+import os
+import winsound
+
+# ... imports ...
+
+from TTS.api import TTS
+
+tts = TTS(
+    "tts_models/multilingual/multi-dataset/xtts_v2"
+)
+
+VOICE_SAMPLE = "voices/myvoice.wav"
+
+
 def speak(text):
 
-    print("Jarvis:",text)
+    print("Jarvis:", text)
 
+    os.makedirs("output", exist_ok=True)
+
+    output_file = os.path.abspath("output/raw.wav")
 
     tts.tts_to_file(
-
         text=text,
-
         speaker_wav=VOICE_SAMPLE,
-
         language="en",
-
-        file_path="output/raw.wav"
-
+        file_path=output_file
     )
 
-
-    play_audio(
-        "output/raw.wav"
-    )
-
+    if os.path.exists(output_file):
+        play_audio(output_file)
+    else:
+        print("raw.wav was not created")
 
 
 def play_audio(file):
 
+    try:
+        winsound.PlaySound(
+            file,
+            winsound.SND_FILENAME
+        )
 
-    os.startfile(file)
+    except Exception as e:
+        print(e)
+
 
 
 
@@ -164,4 +182,3 @@ while True:
 
     speak(response)
 
-    ..
